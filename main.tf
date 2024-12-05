@@ -23,6 +23,9 @@ resource "null_resource" "next2" {
 
 
 
+
+
+
 output "creation_time" {
     value = time_sleep.wait_30_seconds.create_duration
 }

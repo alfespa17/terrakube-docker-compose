@@ -22,5 +22,3 @@ output "creation_time" {
 }
 
 
-
-

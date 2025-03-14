@@ -1,3 +1,0 @@
-[submodule "configuration"]
-	path = terrakube-docker-compose
-	url = https://github.com/AzBuilder/terrakube-docker-compose.git

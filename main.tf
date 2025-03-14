@@ -17,7 +17,9 @@ resource "null_resource" "next" {
   depends_on = [time_sleep.wait_30_seconds]
 }
 
-
+resource "null_resource" "next2" {
+  depends_on = [time_sleep.wait_30_seconds]
+}
 
 output "creation_time" {
     value = time_sleep.wait_30_seconds.create_duration

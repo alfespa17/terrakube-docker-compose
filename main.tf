@@ -21,9 +21,13 @@ resource "null_resource" "next2" {
   depends_on = [time_sleep.wait_30_seconds]
 }
 
+resource "time_sleep" "wait_time_seconds" {
+  count = 250
+  depends_on = [null_resource.previous]
 
-
-
+  create_duration = "5s"
+  destroy_duration = "5s"
+}
 
 output "creation_time" {
     value = time_sleep.wait_30_seconds.create_duration

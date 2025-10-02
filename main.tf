@@ -22,7 +22,7 @@ resource "null_resource" "next2" {
 }
 
 resource "time_sleep" "wait_time_seconds" {
-  count = 250
+  count = 1000
   depends_on = [null_resource.previous]
 
   create_duration = "5s"

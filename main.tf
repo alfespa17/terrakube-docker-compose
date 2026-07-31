@@ -17,6 +17,12 @@ resource "null_resource" "next" {
   depends_on = [time_sleep.wait_30_seconds]
 }
 
+resource "random_string" "random" {
+  length           = 16
+  special          = true
+  override_special = "/@£$"
+}
+
 
 
 output "creation_time" {

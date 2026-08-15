@@ -1,30 +1,23 @@
-# This resource will destroy (potentially immediately) after null_resource.next
-resource "null_resource" "previous" {}
-
-module "time_module" {
-  source = "./module"
-}
- 
-resource "time_sleep" "wait_30_seconds" {
-  
-  depends_on = [null_resource.previous]
-
-  create_duration = local.time
+terraform {
+  required_version = ">= 1.4.0"
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5.0"
+    }
+  }
 }
 
-# This resource will create (at least) 30 seconds after null_resource.previous
-resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_30_seconds]
+# 1. Generate an unknown-at-plan-time sensitive secret
+resource "random_password" "db_password" {
+  length  = 20
+  special = true
 }
-
-resource "null_resource" "next2" {
-  depends_on = [time_sleep.wait_30_seconds]
-}
-
-
-
-
-
-output "creation_time" {
-    value = time_sleep.wait_30_seconds.create_duration
+# 2. Pack the unknown secret into a sensitive map
+resource "terraform_data" "db_credentials" {
+  input = sensitive({
+    username      = "admin"
+    secret_token  = random_password.db_password.result
+    endpoint_port = 5432
+  })
 }

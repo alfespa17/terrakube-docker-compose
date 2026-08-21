@@ -1,30 +1,43 @@
-# This resource will destroy (potentially immediately) after null_resource.next
-resource "null_resource" "previous" {}
-
-module "time_module" {
-  source = "./module"
-}
- 
-resource "time_sleep" "wait_30_seconds" {
-  
-  depends_on = [null_resource.previous]
-
-  create_duration = local.time
+terraform {
+  required_version = ">= 1.4.0"
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5.0"
+    }
+  }
 }
 
-# This resource will create (at least) 30 seconds after null_resource.previous
-resource "null_resource" "next" {
-  depends_on = [time_sleep.wait_30_seconds]
+locals {
+  users = {
+    "name.surname" = "user1"
+    "alice.smith"  = "user2"
+    "bob.jones"    = "user3"
+  }
 }
 
-resource "null_resource" "next2" {
-  depends_on = [time_sleep.wait_30_seconds]
+# Resources with string map index keys:
+# - terraform_data.users["name.surname"]
+# - terraform_data.users["alice.smith"]
+# - terraform_data.users["bob.jones"]
+resource "terraform_data" "users" {
+  for_each = local.users
+
+  input = {
+    username = each.key
+    role     = each.value
+  }
 }
 
+# Another resource with string index key
+resource "random_pet" "user_pet" {
+  for_each = local.users
 
+  length = 2
+  prefix = each.key
+}
 
-
-
-output "creation_time" {
-    value = time_sleep.wait_30_seconds.create_duration
+# Standalone resource without index
+resource "terraform_data" "standalone" {
+  input = "standard-resource"
 }
